@@ -151,7 +151,7 @@ class TagList(db.Model):
 with app.app_context():
     db.create_all()
 
-admin = Admin(app, name='Admin Panel', template_mode='bootstrap3')
+admin = Admin(app, name='Admin Panel')
 admin.add_view(ModelView(AdminData, db.session))
 admin.add_view(ModelView(EmpData, db.session))
 admin.add_view(ModelView(Leaves, db.session))
