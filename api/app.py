@@ -423,7 +423,7 @@ def add_project_data():
     tags = ','.join(data.get('tags'))  # Convert list of tags to comma-separated string
     timeElapsed = data.get('timeElapsed')
     
-    # Create a new Project instance and add it to the database
+   
     new_project = Project(projectName=projectName, task=task, tags=tags, timeElapsed=timeElapsed)
     db.session.add(new_project)
     db.session.commit()
