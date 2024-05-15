@@ -18,7 +18,11 @@ CORS(app, resources={r"/auth/*": {
     "allow_headers": ["Content-Type", "Authorization"],
     "supports_credentials": True
 }})
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+
+# MySQL Configuration
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://admin:priya@localhost/emp'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
@@ -30,8 +34,6 @@ app.config['MAIL_USE_SSL'] = False
 app.config['MAIL_USERNAME'] = 'rushideshmukh824@gmail.com'
 app.config['MAIL_PASSWORD'] = 'app_password'
 mail = Mail(app)
-
-migrate = Migrate(app, db)
 
 class AdminData(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -157,6 +159,8 @@ admin.add_view(ModelView(ProjectList, db.session))
 admin.add_view(ModelView(Project, db.session))
 admin.add_view(ModelView(Events, db.session))
 admin.add_view(ModelView(TagList, db.session))
+
+
 
 @app.route('/')
 def home():
