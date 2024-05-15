@@ -9,8 +9,6 @@ import random
 from sqlalchemy import LargeBinary
 from flask_migrate import Migrate
 import base64
-from flask_mysqldb import MySQL
-
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -20,19 +18,9 @@ CORS(app, resources={r"/auth/*": {
     "allow_headers": ["Content-Type", "Authorization"],
     "supports_credentials": True
 }})
-
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'root'
-app.config['MYSQL_DB'] = 'employee'
-
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root@localhost/employee'
-
-mysql = MySQL(app)
-
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-
 
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
@@ -173,37 +161,18 @@ admin.add_view(ModelView(TagList, db.session))
 def home():
     return redirect(url_for('admin.index'))
 @app.route('/auth/adminlogin', methods=['GET', 'POST'])
+
 def adminlogin():
-    try:
-        data = request.json
-        username = data.get('username')
-        password = data.get('password')
-        admin = Admin.query.filter_by(username=username).first()
-        if admin and admin.password == password:
-            session['logged_in'] = True
-            session['username'] = username
-            return jsonify({'loginStatus': True}), 200
-        else:
-            return jsonify({'loginStatus': False, 'Error': 'Invalid credentials'}), 401
-    except Exception as e:
-        return jsonify({'error': 'Internal Server Error'}), 500
-
-@app.route('/auth/login', methods=['POST'])
-def employee_login():
-    try:
-        data = request.json
-        empid = data.get('empid')
-        password = data.get('password')
-
-        user = EmpData.query.filter_by(empid=empid).first()
-        if user and user.password == password:
-            session['logged_in'] = True
-            session['empid'] = empid
-            return jsonify({'loginStatus': True}), 200
-        else:
-            return jsonify({'loginStatus': False, 'Error': 'Invalid credentials'}), 401
-    except Exception as e:
-        return jsonify({'error': 'Internal Server Error'}), 500
+    data = request.json
+    email = data.get('email')
+    password = data.get('password')
+    adminData = AdminData.query.filter_by(email=email).first()
+    if  adminData and adminData.password == password:
+        print('Login successful')
+        session['logged_in'] = True
+        return jsonify({'loginStatus': True}), 200
+    else:
+        return jsonify({'loginStatus': False, 'Error': 'Invalid credentials'}), 401
 
 @app.route('/auth/add_employee', methods=['POST'])
 def addEmp():
@@ -221,6 +190,20 @@ def addEmp():
     db.session.commit()
 
     return jsonify({'message': 'Employee added successfully'}), 200
+
+@app.route('/auth/login', methods=['GET', 'POST'])
+def login():
+    data = request.json
+    empid = data.get('empid')
+    password = data.get('password')
+    user = EmpData.query.filter_by(empid=empid).first()
+    if  user and user.password == password:
+        print('Login successful')
+        session['logged_in'] = True
+        session['empid'] = empid
+        return jsonify({'loginStatus': True}), 200
+    else:
+        return jsonify({'loginStatus': False, 'Error': 'Invalid credentials'}), 401
 
 @app.route('/auth/employee', methods=['GET', 'POST'])
 def get_employee_data():
@@ -253,7 +236,6 @@ def get_employees():
             'category': employee.category
         }
         employee_list.append(employee_dict)
-        db.session.commit()
     return jsonify({'Status': True, 'Result': employee_list}), 200
 
 @app.route('/auth/update_employee', methods=['POST'])
