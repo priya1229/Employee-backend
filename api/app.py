@@ -19,7 +19,7 @@ CORS(app, resources={r"/auth/*": {
     "supports_credentials": True
 }})
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://admin:priya@localhost:33060/emp'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://admin:priya@localhost:3306/emp'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['DEBUG'] = True
 
