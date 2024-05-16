@@ -149,7 +149,12 @@ class TagList(db.Model):
         self.tag = tag
         
 with app.app_context():
+   try:
     db.create_all()
+    app.logger.info('Database tables created successfully')
+   except Exception as e:
+    app.logger.error(f'Error creating database tables: {e}')
+
 
 admin = Admin(app, name='Admin Panel')
 admin.add_view(ModelView(AdminData, db.session))
