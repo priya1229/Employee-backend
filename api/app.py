@@ -90,7 +90,7 @@ class ProjectList(db.Model):
 class Project(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     projectName = db.Column(db.String(255))
-    task = db.Column(db.String(255))  # Change 'task' to 'description'
+    task = db.Column(db.String(255))  
     tags = db.Column(db.String(255))
     timeElapsed = db.Column(db.Integer)
 
