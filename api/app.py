@@ -1,7 +1,6 @@
 from flask import Flask, jsonify, request, session, redirect, url_for
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.dialects.postgresql import BYTEA
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from datetime import datetime
@@ -20,8 +19,7 @@ CORS(app, resources={r"/auth/*": {
     "supports_credentials": True
 }})
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:root@localhost:5432/Employee'
-
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://admin:priya@localhost/emp'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['DEBUG'] = True
 
