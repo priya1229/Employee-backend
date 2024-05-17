@@ -26,7 +26,7 @@ CORS(app, resources={r"/auth/*": {
 client = MongoClient(
     'mongodb+srv://admin:priya@cluster0.l6dotpe.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
     tls=True,
-    tlsAllowInvalidCertificates=True,
+    tlsCAFile='certs/ca-certificates.crt',
     socketTimeoutMS=30000,
     connectTimeoutMS=30000
 )
