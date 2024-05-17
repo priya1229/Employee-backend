@@ -118,6 +118,14 @@ def initialize_db():
     if 'events' not in collections:
         db.create_collection('events')
 
+    # Create indexes
+    db.admin_data.create_index('email', unique=True)
+    db.emp_data.create_index('email', unique=True)
+    db.emp_data.create_index('empid', unique=True)
+    db.leaves.create_index('employeeId', unique=True)
+    db.project_list.create_index('name', unique=True)
+    db.events.create_index('title', unique=True)
+
 
 initialize_db()
 
