@@ -13,13 +13,13 @@ import base64
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 CORS(app, resources={r"/auth/*": {
-    "origins": ["http://localhost:5173","https://employeelogin.vercel.app"],
+    "origins": ["http://localhost:5173", "https://employeelogin.vercel.app"],
     "methods": ["POST", "OPTIONS", "GET"],
     "allow_headers": ["Content-Type", "Authorization"],
     "supports_credentials": True
 }})
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://admin:priya@localhost:3306/emp'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://admin:priya@your_database_host/emp'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['DEBUG'] = True
 
@@ -31,7 +31,7 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
-app.config['MAIL_USERNAME'] = 'rushideshmukh824@gmail.com'
+app.config['MAIL_USERNAME'] = 'your_email@gmail.com'
 app.config['MAIL_PASSWORD'] = 'app_password'
 mail = Mail(app)
 
@@ -108,7 +108,7 @@ class Project(db.Model):
             'tags': self.tags,
             'timeElapsed': self.timeElapsed
         }
-    
+
 class Events(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
@@ -140,21 +140,20 @@ class Events(db.Model):
     def delete_event(self):
         db.session.delete(self)
         db.session.commit()
-        
+
 class TagList(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     tag = db.Column(db.String(100), nullable=False)
 
     def __init__(self, tag):
         self.tag = tag
-        
-with app.app_context():
-   try:
-    db.create_all()
-    app.logger.info('Database tables created successfully')
-   except Exception as e:
-    app.logger.error(f'Error creating database tables: {e}')
 
+with app.app_context():
+    try:
+        db.create_all()
+        app.logger.info('Database tables created successfully')
+    except Exception as e:
+        app.logger.error(f'Error creating database tables: {e}')
 
 admin = Admin(app, name='Admin Panel')
 admin.add_view(ModelView(AdminData, db.session))
@@ -164,8 +163,6 @@ admin.add_view(ModelView(ProjectList, db.session))
 admin.add_view(ModelView(Project, db.session))
 admin.add_view(ModelView(Events, db.session))
 admin.add_view(ModelView(TagList, db.session))
-
-
 
 @app.route('/')
 def home():
