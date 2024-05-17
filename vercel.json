@@ -14,5 +14,10 @@
             "src": "/(.*)",
             "dest": "api/app.py"
         }
-    ]
+    ],
+    "env": {
+        "DATABASE_URL": "mysql+mysqlconnector://admin:priya@localhost:3306/emp",
+        "MAIL_USERNAME": "rushideshmukh824@gmail.com",
+        "MAIL_PASSWORD": "app_password"
+    }
 }
