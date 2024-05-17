@@ -1,11 +1,16 @@
 from flask import Flask, jsonify, request, session, redirect, url_for
 from flask_cors import CORS
 from flask_mail import Mail, Message
+from flask_admin import Admin
+from flask_admin.contrib.pymongo import ModelView
 from datetime import datetime
 import random
 import base64
 from pymongo import MongoClient
 from bson.objectid import ObjectId
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, FileField, DecimalField, SelectField
+from wtforms.validators import DataRequired
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -30,15 +35,82 @@ app.config['MAIL_USERNAME'] = 'rushideshmukh824@gmail.com'
 app.config['MAIL_PASSWORD'] = 'app_password'
 mail = Mail(app)
 
-def initialize_db():
-    # Ensure collections exist and create indexes if necessary
-    db.create_collection('admin_data')
-    db.create_collection('emp_data')
-    db.create_collection('leaves')
-    db.create_collection('project_list')
-    db.create_collection('events')
 
-    # Create indexes
+class AdminDataForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
+
+class EmployeeDataForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired()])
+    empid = StringField('Employee ID', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    salary = DecimalField('Salary', validators=[DataRequired()])
+    category = SelectField('Category', choices=[('1', 'Category 1'), ('2', 'Category 2')], validators=[DataRequired()])
+    profile = FileField('Profile Image')
+
+class LeavesForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired()])
+    employeeId = StringField('Employee ID', validators=[DataRequired()])
+    reason = StringField('Reason', validators=[DataRequired()])
+    numberOfDays = DecimalField('Number of Days', validators=[DataRequired()])
+    fromDate = StringField('From Date', validators=[DataRequired()])
+    toDate = StringField('To Date', validators=[DataRequired()])
+
+class ProjectForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired()])
+
+class EventForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    start = StringField('Start', validators=[DataRequired()])
+    end = StringField('End', validators=[DataRequired()])
+    allDay = StringField('All Day')
+
+
+class AdminDataView(ModelView):
+    column_list = ('email', 'password')
+    form = AdminDataForm
+
+class EmployeeDataView(ModelView):
+    column_list = ('name', 'email', 'empid', 'salary', 'category', 'profile') 
+    form = EmployeeDataForm
+
+class LeavesView(ModelView):
+    column_list = ('name', 'employeeId', 'reason', 'numberOfDays', 'fromDate', 'toDate')
+    form = LeavesForm
+
+class ProjectView(ModelView):
+    column_list = ('name',)
+    form = ProjectForm
+
+class EventView(ModelView):
+    column_list = ('title', 'start', 'end', 'allDay')
+    form = EventForm
+
+admin = Admin(app, name='Admin Panel', template_mode='bootstrap3')
+admin.add_view(AdminDataView(db.admin_data, 'Admin Data'))
+admin.add_view(EmployeeDataView(db.emp_data, 'Employee Data'))
+admin.add_view(LeavesView(db.leaves, 'Leaves'))
+admin.add_view(ProjectView(db.project_list, 'Projects'))
+admin.add_view(EventView(db.events, 'Events'))
+
+def initialize_db():
+    # Check if collections already exist
+    collections = db.list_collection_names()
+
+    # If collections don't exist, create them
+    if 'admin_data' not in collections:
+        db.create_collection('admin_data')
+    if 'emp_data' not in collections:
+        db.create_collection('emp_data')
+    if 'leaves' not in collections:
+        db.create_collection('leaves')
+    if 'project_list' not in collections:
+        db.create_collection('project_list')
+    if 'events' not in collections:
+        db.create_collection('events')
+
+    # Create indexes if necessary
     db.admin_data.create_index('email', unique=True)
     db.emp_data.create_index('empid', unique=True)
     db.leaves.create_index('empid')
@@ -284,5 +356,4 @@ def get_projects():
         return jsonify({'error': 'Internal Server Error'}), 500
 
 if __name__ == '__main__':
-    initialize_db()
-    app.run(debug=True)
+    app.run(debug=True, host='localhost', port=5000)
