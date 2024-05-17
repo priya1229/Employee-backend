@@ -176,7 +176,7 @@ def adminlogin():
         data = request.json
         username = data.get('username')
         password = data.get('password')
-        admin = Admin.query.filter_by(username=username).first()
+        admin = AdminData.query.filter_by(email=username).first()  # Corrected from Admin to AdminData
         if admin and admin.password == password:
             session['logged_in'] = True
             session['username'] = username
@@ -185,6 +185,7 @@ def adminlogin():
             return jsonify({'loginStatus': False, 'Error': 'Invalid credentials'}), 401
     except Exception as e:
         return jsonify({'error': 'Internal Server Error'}), 500
+
 
 @app.route('/auth/login', methods=['POST'])
 def employee_login():
