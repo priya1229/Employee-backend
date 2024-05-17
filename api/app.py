@@ -1,10 +1,10 @@
 from flask import Flask, jsonify, request, session, redirect, url_for
 from flask_cors import CORS
-from flask_mail import Mail, Message
+from flask_mail import Mail
 from flask_admin import Admin
 from flask_admin.contrib.pymongo import ModelView
 from datetime import datetime
-import random
+
 import base64
 from pymongo import MongoClient
 from bson.objectid import ObjectId
@@ -110,13 +110,6 @@ def initialize_db():
     if 'events' not in collections:
         db.create_collection('events')
 
-    # Create indexes if necessary
-    db.admin_data.create_index('email', unique=True)
-    db.emp_data.create_index('empid', unique=True)
-    db.leaves.create_index('empid')
-    db.project_list.create_index('name', unique=True)
-    db.events.create_index('start')
-    db.events.create_index('end')
 
 initialize_db()
 
