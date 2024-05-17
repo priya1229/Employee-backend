@@ -4,7 +4,7 @@ from flask_mail import Mail
 from flask_admin import Admin
 from flask_admin.contrib.pymongo import ModelView
 from datetime import datetime
-
+import ssl
 import base64
 from pymongo import MongoClient
 from bson.objectid import ObjectId
@@ -23,7 +23,15 @@ CORS(app, resources={r"/auth/*": {
 }})
 
 # MongoDB configuration
-client = MongoClient('mongodb+srv://admin:priya@cluster0.l6dotpe.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')  # Update this with your MongoDB URI
+client = MongoClient(
+    'mongodb+srv://admin:priya@cluster0.l6dotpe.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
+    tls=True,
+    tlsAllowInvalidCertificates=True,
+    socketTimeoutMS=30000,
+    connectTimeoutMS=30000
+)
+
+  # Update this with your MongoDB URI
 db = client['employeee']
 
 # Mail configuration
