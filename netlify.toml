@@ -1,0 +1,23 @@
+[build
+]
+  base = "api/"
+  command = "pip install -r requirements.txt && python app.py"
+  publish = "api/"
+  environment = { MONGODB_URI = "mongodb+srv://admin:priya@cluster0.l6dotpe.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+}
+
+[
+  [redirects
+  ]
+]
+  from = "/.netlify/functions/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+[
+  [redirects
+  ]
+]
+  from = "/*"
+  to = "/.netlify/functions/api"
+  status = 200
