@@ -54,7 +54,7 @@ class EmployeeDataForm(FlaskForm):
     empid = StringField('Employee ID', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     salary = DecimalField('Salary', validators=[DataRequired()])
-    category = SelectField('Category', choices=[('1', 'Category 1'), ('2', 'Category 2')], validators=[DataRequired()])
+    category = SelectField('Category', choices=[('1', 'HR'), ('2', 'TECH')], validators=[DataRequired()])
     profile = FileField('Profile Image')
 
 class LeavesForm(FlaskForm):
