@@ -593,7 +593,7 @@ TimeTracker - Add Project To Databaase
 """
 
 
-@app.route('/auth/add_project_data', methods=['POST'])
+@app.route('/auth/projects', methods=['POST'])
 def add_project_data():
     print(f'Session contents: {session}')
     if 'empid' not in session:
