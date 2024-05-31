@@ -593,40 +593,30 @@ TimeTracker - Add Project To Databaase
 """
 
 
-@app.route('/auth/projects', methods=['POST'])
+@app.route('/auth/add_project_data', methods=['POST'])
 def add_project_data():
-    print(f'Session contents: {session}')
-    if 'empid' not in session:
-        return jsonify({'error': 'Not logged in'}), 401
-
-    empid = session['empid']
-    session['empid'] = empid
-    session.modified = True
-    print(f'Adding project data for empid: {empid}')
     data = request.json
     projectName = data.get('projectName')
-    task = data.get('task')
-    tags = data.get('tags')
+    task = data.get('task')  
+    tags = data.get('tags') 
     timeElapsed = data.get('timeElapsed')
-
+    
     # Generate projectid using ObjectId
     projectid = str(ObjectId())
 
     new_project = {
         'projectid': projectid,
-        'empid': empid,
         'projectName': projectName,
         'task': task,
         'tags': tags,
         'timeElapsed': timeElapsed
     }
     result = db.projects.insert_one(new_project)
-
+    
     if result.inserted_id:
         return jsonify({'message': 'Project data added successfully!', 'projectid': projectid}), 201
     else:
         return jsonify({'error': 'Failed to add project data.'}), 500
-
 
 """
 TimeTracker - Display worked project details
